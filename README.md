@@ -1,4 +1,4 @@
-#CZ1003 NTU F&B recommendation
+# CZ1003 NTU F&B recommendation
 
 Installing dependencies
 
