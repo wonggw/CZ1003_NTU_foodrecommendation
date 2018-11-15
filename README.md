@@ -21,13 +21,13 @@ python main.py
 * **display.py** is to display the image onto pygame and record the position of the is mouse clicked. Will update the image based on where the mouse is clicked.
 
 * **Algo.py** contains statistical tools for computing the score for the 3 variable.
-[X] Distance
-[X] Type of cuisine
-[X] Price range
+- [x]  Distance
+- [x]  Type of cuisine
+- [x]  Price range
 
 * **Astar.py** contains astar search algorithm.
-[x] To create the graph
-[x] To compute the shortest distance and the cost.
+- [x]  To create the graph
+- [x]  To compute the shortest distance and the cost.
 
 ### To collect the coordinate for obstacle and bus route:
 
