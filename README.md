@@ -16,18 +16,18 @@ python main.py
 
 ## Description:
 
-⋅⋅* **main.py** is used to link all the functions together.
+* **main.py** is used to link all the functions together.
 
-⋅⋅* **display.py** is to display the image onto pygame and record the position of the is mouse clicked. Will update the image based on where the mouse is clicked.
+* **display.py** is to display the image onto pygame and record the position of the is mouse clicked. Will update the image based on where the mouse is clicked.
 
-⋅⋅* **Algo.py** contains statistical tools for computing the score for the 3 variable.
-	1. Distance
-	2. Type of cuisine
-	3. Price range
+* **Algo.py** contains statistical tools for computing the score for the 3 variable.
+[X] Distance
+[X] Type of cuisine
+[X] Price range
 
-⋅⋅* **Astar.py** contains astar search algorithm.
-	1. To create the graph
-	2. To compute the shortest distance and the cost.
+* **Astar.py** contains astar search algorithm.
+[x] To create the graph
+[x] To compute the shortest distance and the cost.
 
 ### To collect the coordinate for obstacle and bus route:
 
