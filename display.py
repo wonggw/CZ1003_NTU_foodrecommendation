@@ -6,6 +6,12 @@ black = (0, 0, 0)
 red=(255,0,0)
 green=(0,255,0)
 blue=(0,0,255)
+forestgreen=(34,139,34)
+darkgreen=(0,100,0)
+Cadet_Blue=(95,158,160)
+purple=(75,0,130)
+pink=(255,105,180)
+orange=(249,166,2)
 white = (255, 255, 255)
 
 class pg_display:
@@ -114,16 +120,24 @@ class pg_display:
 		self.load_img(NTU_map,(self.width_map,self.height_map),(0,0))
 		self.load_img(compute_button,(373,45),(700,500))
 
-
-		for coord in self.shortest_coords:
-			pygame.draw.circle(self.screen,red, (coord[0],coord[1]), 3)
+		for i in range(len(self.shortest_coords)):
+			for coord in self.shortest_coords[i]:
+				if i == 0:
+					color=red
+				elif i ==1:
+					color=darkgreen
+				elif i ==2:
+					color=blue
+				pygame.draw.circle(self.screen,color, (coord[0],coord[1]), 3)
 
 		if self.x_coord_map !=0 and self.y_coord_map !=0:
 			pygame.draw.line(self.screen, black, [self.x_coord_map-10, self.y_coord_map-10], [self.x_coord_map+10,self.y_coord_map+10], 5)
 			pygame.draw.line(self.screen, black, [self.x_coord_map+10, self.y_coord_map-10], [self.x_coord_map-10,self.y_coord_map+10], 5)
 
 		if self.saved_recommend != "":
-			self.message_to_screen(self.saved_recommend, white,830, 560)
+			self.message_to_screen("1. "+self.saved_recommend[0], Cadet_Blue ,820, 560)
+			self.message_to_screen("2. "+self.saved_recommend[1], forestgreen,820, 590)
+			self.message_to_screen("3. "+self.saved_recommend[2], red,820, 620)
 
 		#display words
 		self.message_to_screen("Input your details:", white,700, 30)
@@ -203,9 +217,9 @@ class pg_display:
 
 	def route_text_message(self,wait=True):
 		if wait==True:
-			self.message_to_screen("Calculating route ...", white,700,620)
+			self.message_to_screen("Calculating route ...", white,700,650)
 		else:
-			self.message_to_screen("Shortest route shown on the map!", white,700,620)
+			self.message_to_screen("Shortest route shown on the map!", white,700,650)
 		pygame.display.flip()
 
 	def display_cuisine_img(self):

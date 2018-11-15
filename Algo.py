@@ -1,9 +1,11 @@
-import numpy as np
 import Astar
 import display
 import threading
 import queue
+import operator
+import numpy as np
 from route_data import route_data
+from menu_data import menu_data
 
 def KL(a, b):	#Kullback–Leibler divergence
 	a = np.asarray(a, dtype=np.float)
@@ -38,13 +40,13 @@ def normalize_meanstd(a, axis=None):
 	std = np.sqrt(((a - mean)**2).mean(axis=axis, keepdims=True))
 	return (a - mean) / std
 
-def Astar_process(user_coord,canteen_coord,canteens_name,astar_graph,pygame_display,queue):
+def distance_a_b(user_coord,canteen_coord,canteens_name,astar_graph,pygame_display,queue):
 	routes_downsample,cost =Astar.AStarSearch(user_coord,canteen_coord, astar_graph)
 	routes=[[a[0]*4, a[1]*4]for a in routes_downsample] 
 	pygame_display.draw_route(routes)
 	queue.put({canteens_name:[routes_downsample,cost]})
 
-def distance_a_b(x_now,y_now,astar_graph,pygame_display,canteens_coords,canteens_names):
+def sort_distance(x_now,y_now,astar_graph,pygame_display,canteens_coords,canteens_names):
 	route_costs=[]
 	route_paths=[]
 	route_names=[]
@@ -56,7 +58,7 @@ def distance_a_b(x_now,y_now,astar_graph,pygame_display,canteens_coords,canteens
 	'''
 	Create thread to calculate the shortest route based on user location with each canteen location
 	'''
-	threads = [threading.Thread(target = Astar_process, args =((x_now//4,y_now//4),tuple(canteens_coords_downsample[i]),canteens_names[i], astar_graph,pygame_display,q), daemon=True) for i in range(len(canteens_coords_downsample))]
+	threads = [threading.Thread(target = distance_a_b, args =((x_now//4,y_now//4),tuple(canteens_coords_downsample[i]),canteens_names[i], astar_graph,pygame_display,q), daemon=True) for i in range(len(canteens_coords_downsample))]
 	[t.start() for t in threads]
 	[t.join() for t in threads]
 
@@ -70,5 +72,56 @@ def distance_a_b(x_now,y_now,astar_graph,pygame_display,canteens_coords,canteens
 	route_reward=-normalize_meanstd(route_costs)
 	highest_reward_index=np.argmax(route_reward)	#compute the index with the highest score
 	pygame_display.display_default_img()
-	pygame_display.shortest_route(route_paths[highest_reward_index],wait=False) #display route with the highest score
-	return route_names,route_reward
+	pygame_display.shortest_route([route_paths[highest_reward_index]],wait=False) #display route with the highest score
+	return route_names,route_reward,route_paths
+
+def search_by_food(food_selected,food_score_dict):
+	if food_selected !=0:
+		a=(int(np.floor((food_selected-3)*10)))
+		b=(int(np.floor((((food_selected-3)*10-a)*10))))
+		food_selected=menu_data.stores_placeholder[a][b]
+		for keys in menu_data.canteen_data:
+			for values_1 in menu_data.canteen_data[keys]["can_food"]:
+				for food in food_selected:
+					if food==values_1:
+						food_score_dict[keys]=1
+	return food_score_dict
+
+def search_by_price(userprice_range,price_score_dict):
+	if userprice_range !=[-1]:
+		prices_overlaps=[]
+		price_scores=[]
+		price_canteens=[]
+		for keys in menu_data.canteen_data:
+			prices_overlaps=[]
+			for values_2 in menu_data.canteen_data[keys]["can_price"]:
+				prices_overlap=OVL_two_random_arr(values_2,userprice_range,20)
+				prices_overlaps.append(prices_overlap)
+				#print (prices_overlap,keys)
+			#normalize_prices_overlaps=normalize_meanstd(prices_overlaps)
+			price_score=np.sum(prices_overlaps)/len(menu_data.canteen_data[keys]["can_price"])
+			price_scores.append(price_score)
+			price_canteens.append(keys)
+		normalize_price_scores=normalize_meanstd(price_scores)
+
+		for i in range(len(price_canteens)):
+			if np.isnan(normalize_price_scores[i]):
+				normalize_price_scores[i]=0
+			price_score_dict[price_canteens[i]]=normalize_price_scores[i]
+	return price_score_dict
+
+def sort_by_rank(canteen_route_score_dict,price_score_dict,food_score_dict,canteen_paths_dict,pygame_display):
+	#Total all the score
+	combined_score_dict={key: canteen_route_score_dict.get(key, 0) + price_score_dict.get(key, 0)/5 + food_score_dict.get(key, 0) for key in set(canteen_route_score_dict) | set(price_score_dict)| set(food_score_dict)}
+	#print ("Combined score\n",combined_score_dict)
+	#Sort the score in descending order
+	sorted_score_dict= sorted(combined_score_dict.items(), key=operator.itemgetter(1))
+	sorted_score_dict.reverse()
+	#print (sorted_score_dict)
+	try:
+		pygame_display.recommended_canteen([sorted_score_dict[0][0],sorted_score_dict[1][0],sorted_score_dict[2][0]])
+	except:
+		pygame_display.recommended_canteen(["None","None","None"])
+	#print(sum(canteen_paths_dict[sorted_score_dict[0][0]],canteen_paths_dict[sorted_score_dict[1][0]],canteen_paths_dict[sorted_score_dict[2][0]]))
+	pygame_display.shortest_route([canteen_paths_dict[sorted_score_dict[2][0]],canteen_paths_dict[sorted_score_dict[1][0]],canteen_paths_dict[sorted_score_dict[0][0]]],wait=False)
+
