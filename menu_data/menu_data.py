@@ -100,7 +100,7 @@ def thai_placeholders():
 
 	return (Place_1,Place_2,Place_3,Place_4,Place_5,Place_6,Place_7,Place_8)
 
-menu_placeholders=[western_placeholders(),korean_placeholders(),japanese_placeholders(),chinese_placeholders(),malay_placeholders(),indian_placeholders(),thai_placeholders()]
+menu_placeholders=[western_placeholders(), korean_placeholders(), japanese_placeholders(),chinese_placeholders(),malay_placeholders(),indian_placeholders(),thai_placeholders()]
 
 
 def western_store():

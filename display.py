@@ -257,14 +257,14 @@ class pg_display:
 		pygame.display.flip()
 
 	def display_menu_img(self):
-		a=int(((self.display_stage-2)*10)-1)
+		a=int((((self.display_stage-2)*10)+0.5)//1)
 		menu = menu_data.menu_placeholders
 		self.screen=pygame.display.set_mode((1050, 580))
 		self.message_to_screen("Select from the menu", white,420,30)
 		self.load_img(menu[a][0],(250,200),(10,80))
-		self.load_img(menu[a][1],(250,200),(270,290))
-		self.load_img(menu[a][2],(250,200),(10,290))
-		self.load_img(menu[a][3],(250,200),(270,80))
+		self.load_img(menu[a][1],(250,200),(10,290))
+		self.load_img(menu[a][2],(250,200),(270,80))
+		self.load_img(menu[a][3],(250,200),(270,290))
 		self.load_img(menu[a][4],(250,200),(530,80))
 		self.load_img(menu[a][5],(250,200),(530,290))
 		self.load_img(menu[a][6],(250,200),(790,80))
@@ -437,6 +437,7 @@ class pg_display:
 
 		self.box_clicked(870,995,520,555,0) #(125,35),(870,520)
 		self.box_clicked(60,185,520,555,1)
+
 
 	def box_clicked(self,x_min,x_max,y_min,y_max,display_stage):
 		if self.x_coord>x_min and self.x_coord<x_max and self.y_coord>y_min and self.y_coord<y_max:
