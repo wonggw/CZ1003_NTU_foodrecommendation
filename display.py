@@ -195,7 +195,7 @@ class pg_display:
 
 		except:
 			if self.otxt0!="" and self.otxt1!="":
-				self.message_to_screen("Wong Input entered", white,740, 355)
+				self.message_to_screen("Wrong Input entered", white,740, 355)
 			return [-1]
 
 	def check_food_select(self):
